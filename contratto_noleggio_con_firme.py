@@ -1,6 +1,8 @@
+
 import streamlit as st
 from fpdf import FPDF
 import datetime
+import pytz
 
 def sanitize(text):
     return (
@@ -26,7 +28,6 @@ residenza = st.text_input("Residenza")
 cf = st.text_input("Codice Fiscale")
 
 st.header("Dati del Noleggio")
-targa = st.text_input("Targa del carrello")
 data_inizio = st.text_input("Data inizio noleggio")
 data_fine = st.text_input("Data fine noleggio")
 ora_restituzione = st.text_input("Ora restituzione")
@@ -35,12 +36,14 @@ cauzione = st.text_input("Cauzione richiesta (EUR)")
 luogo = st.text_input("Luogo di firma")
 
 if st.button("Genera Contratto PDF"):
-    if not all([nome, nascita, residenza, cf, targa, data_inizio, data_fine, ora_restituzione, prezzo, cauzione, luogo]):
+    if not all([nome, nascita, residenza, cf, data_inizio, data_fine, ora_restituzione, prezzo, cauzione, luogo]):
         st.error("⚠️ Compila tutti i campi per generare il contratto.")
     else:
-        now = datetime.datetime.now()
+        rome_tz = pytz.timezone("Europe/Rome")
+        now = datetime.datetime.now(rome_tz)
         data_firma = now.strftime("%d/%m/%Y")
         ora_firma = now.strftime("%H:%M")
+        targa = "AD58741"
 
         pdf = FPDF()
         pdf.add_page()
@@ -49,46 +52,58 @@ if st.button("Genera Contratto PDF"):
         pdf.cell(0, 10, sanitize("CONTRATTO DI NOLEGGIO TRA PRIVATI - CARRELLO PORTA MOTO"), ln=True, align='C')
         pdf.ln(10)
 
-        testo = f"""
-Tra i sottoscritti:
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize("Tra i sottoscritti:"))
 
-- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato "Locatore";
-
-e
-
-- Il Sig./la Sig.ra {nome}, nato/a il {nascita}, residente in {residenza}, C.F. {cf}, in possesso di patente di guida valida e della carta di circolazione del veicolo trainante, di seguito denominato/a "Conduttore";
-
-Si stipula il seguente contratto di noleggio:
-
-Il Locatore concede in uso temporaneo al Conduttore il carrello porta moto targato {targa}, per il trasporto di motocicli.
-
-Periodo di noleggio:
-dal {data_inizio} al {data_fine}, con restituzione prevista entro le ore {ora_restituzione} del giorno {data_fine}.
-
-Il corrispettivo per il noleggio è pari a EUR {prezzo}, da versare anticipatamente. È inoltre richiesta una cauzione di EUR {cauzione}, che verrà restituita al termine del noleggio salvo danni o inadempienze.
-
-Il Conduttore si impegna a:
-- Utilizzare il carrello in conformità alle norme del Codice della Strada
-- Restituire il carrello nelle stesse condizioni in cui è stato ricevuto
-- Assumersi ogni responsabilità civile e penale derivante dall'uso del mezzo
-
-Il Locatore declina ogni responsabilità per danni a persone o cose derivanti dall'uso improprio del carrello da parte del Conduttore.
-
-Letto, approvato e sottoscritto.
-
-Luogo: {luogo}
-Data: {data_firma}
-Ora: {ora_firma}
-
-Firma del Locatore: ______________________
-
-Firma del Conduttore: ______________________
-        """
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize("- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato "Locatore";"))
 
         pdf.set_font("Arial", size=11)
-        pdf.multi_cell(0, 10, sanitize(testo))
-        path_out = "/tmp/contratto_noleggio.pdf"
-        pdf.output(path_out)
+        pdf.multi_cell(0, 10, sanitize("e"))
 
-        with open(path_out, "rb") as f:
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize(f"- Il Sig./la Sig.ra {nome}, nato/a il {nascita}, residente in {residenza}, C.F. {cf}, in possesso di patente di guida valida e della carta di circolazione del veicolo trainante, di seguito denominato/a "Conduttore";"))
+
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize("Si stipula il seguente contratto di noleggio:"))
+        pdf.multi_cell(0, 10, sanitize("Il Locatore concede in uso temporaneo al Conduttore il carrello porta moto targato "))
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize(f"{targa}, per il trasporto di motocicli."))
+
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize("Periodo di noleggio:"))
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize(f"dal {data_inizio} al {data_fine}, con restituzione prevista entro le ore {ora_restituzione} del giorno {data_fine}."))
+
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize("Il corrispettivo per il noleggio è pari a "))
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize(f"EUR {prezzo}"))
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize(" da versare anticipatamente. È inoltre richiesta una cauzione di "))
+        pdf.set_font("Arial", 'B', 11)
+        pdf.multi_cell(0, 10, sanitize(f"EUR {cauzione}"))
+        pdf.set_font("Arial", size=11)
+        pdf.multi_cell(0, 10, sanitize(", che verrà restituita al termine del noleggio salvo danni o inadempienze."))
+
+        pdf.multi_cell(0, 10, sanitize("Il Conduttore si impegna a:"))
+        pdf.multi_cell(0, 10, sanitize("- Utilizzare il carrello in conformità alle norme del Codice della Strada"))
+        pdf.multi_cell(0, 10, sanitize("- Restituire il carrello nelle stesse condizioni in cui è stato ricevuto"))
+        pdf.multi_cell(0, 10, sanitize("- Assumersi ogni responsabilità civile e penale derivante dall'uso del mezzo"))
+        pdf.multi_cell(0, 10, sanitize("Il Locatore declina ogni responsabilità per danni a persone o cose derivanti dall'uso improprio del carrello da parte del Conduttore."))
+
+        pdf.ln(5)
+        pdf.multi_cell(0, 10, sanitize("Letto, approvato e sottoscritto."))
+        pdf.ln(5)
+        pdf.cell(0, 10, sanitize(f"Luogo: {luogo}"), ln=True)
+        pdf.cell(0, 10, sanitize(f"Data: {data_firma}"), ln=True)
+        pdf.cell(0, 10, sanitize(f"Ora: {ora_firma}"), ln=True)
+        pdf.ln(10)
+        pdf.cell(0, 10, "Firma del Locatore: ______________________", ln=True)
+        pdf.cell(0, 10, "Firma del Conduttore: ______________________", ln=True)
+
+        file_path = "/tmp/contratto_noleggio.pdf"
+        pdf.output(file_path)
+
+        with open(file_path, "rb") as f:
             st.download_button("📄 Scarica il contratto PDF", f, file_name="contratto_noleggio.pdf", mime="application/pdf")
