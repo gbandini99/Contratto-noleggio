@@ -56,7 +56,7 @@ if st.button("Genera Contratto PDF"):
         pdf.multi_cell(0, 10, sanitize("Tra i sottoscritti:"))
 
         pdf.set_font("Arial", 'B', 11)
-        pdf.multi_cell(0, 10, sanitize("- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato "Locatore";"))
+        pdf.multi_cell(0, 10, sanitize("- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato \\\"Locatore\\\";"))
 
         pdf.set_font("Arial", size=11)
         pdf.multi_cell(0, 10, sanitize("e"))
