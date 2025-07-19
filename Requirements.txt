@@ -1,0 +1,6 @@
+stremlit
+fpdf
+pillow
+python-docx
+reportlab
+pypdf2
