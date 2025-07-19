@@ -56,13 +56,13 @@ if st.button("Genera Contratto PDF"):
         pdf.multi_cell(0, 10, sanitize("Tra i sottoscritti:"))
 
         pdf.set_font("Arial", 'B', 11)
-        pdf.multi_cell(0, 10, sanitize("- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato \\\"Locatore\\\";"))
+        pdf.multi_cell(0, 10, sanitize("- Il Sig. Giacomo Bandini, nato il 23/02/1999, residente in via Laghi 57/2, C.F. BNDGCM99B23D458O, di seguito denominato \"Locatore\";"))
 
         pdf.set_font("Arial", size=11)
         pdf.multi_cell(0, 10, sanitize("e"))
 
         pdf.set_font("Arial", 'B', 11)
-        pdf.multi_cell(0, 10, sanitize(f"- Il Sig./la Sig.ra {nome}, nato/a il {nascita}, residente in {residenza}, C.F. {cf}, in possesso di patente di guida valida e della carta di circolazione del veicolo trainante, di seguito denominato/a "Conduttore";"))
+        pdf.multi_cell(0, 10, sanitize(f"- Il Sig./la Sig.ra {nome}, nato/a il {nascita}, residente in {residenza}, C.F. {cf}, in possesso di patente di guida valida e della carta di circolazione del veicolo trainante, di seguito denominato/a \"Conduttore\";"))
 
         pdf.set_font("Arial", size=11)
         pdf.multi_cell(0, 10, sanitize("Si stipula il seguente contratto di noleggio:"))
