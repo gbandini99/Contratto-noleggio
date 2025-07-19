@@ -1,4 +1,3 @@
-
 import streamlit as st
 from fpdf import FPDF
 import datetime
@@ -46,8 +45,6 @@ if st.button("Genera Contratto PDF"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.set_font("Arial", size=11)
-
         pdf.set_font("Arial", 'B', 14)
         pdf.cell(0, 10, sanitize("CONTRATTO DI NOLEGGIO TRA PRIVATI - CARRELLO PORTA MOTO"), ln=True, align='C')
         pdf.ln(10)
@@ -90,9 +87,8 @@ Firma del Conduttore: ______________________
 
         pdf.set_font("Arial", size=11)
         pdf.multi_cell(0, 10, sanitize(testo))
-        file_path = "/mnt/data/contratto_noleggio.pdf"
-        pdf.output(file_path)
+        path_out = "contratto_noleggio.pdf"
+        pdf.output(path_out)
 
-        st.success("✅ Contratto generato con successo!")
-        with open(file_path, "rb") as f:
-            st.download_button("📄 Scarica il contratto PDF", f, file_name="contratto_noleggio.pdf", mime="application/pdf")
+        with open(path_out, "rb") as f:
+            st.download_button("📄 Scarica il contratto PDF", f, file_name=path_out, mime="application/pdf")
