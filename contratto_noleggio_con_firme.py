@@ -87,8 +87,8 @@ Firma del Conduttore: ______________________
 
         pdf.set_font("Arial", size=11)
         pdf.multi_cell(0, 10, sanitize(testo))
-        path_out = "contratto_noleggio.pdf"
+        path_out = "/tmp/contratto_noleggio.pdf"
         pdf.output(path_out)
 
         with open(path_out, "rb") as f:
-            st.download_button("📄 Scarica il contratto PDF", f, file_name=path_out, mime="application/pdf")
+            st.download_button("📄 Scarica il contratto PDF", f, file_name="contratto_noleggio.pdf", mime="application/pdf")
