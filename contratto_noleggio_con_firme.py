@@ -3,6 +3,7 @@ import streamlit as st
 from fpdf import FPDF
 import datetime
 import pytz
+import re
 
 def sanitize(text):
     return (
@@ -43,7 +44,12 @@ if st.button("Genera Contratto PDF"):
         now = datetime.datetime.now(rome_tz)
         data_firma = now.strftime("%d/%m/%Y")
         ora_firma = now.strftime("%H:%M")
+        data_str = now.strftime("%Y%m%d")
         targa = "AD58741"
+
+        nome_clean = re.sub(r"\W+", "", nome.replace(" ", ""))
+        filename = f"{data_str}_{nome_clean}.pdf"
+        output_path = f"/tmp/{filename}"
 
         pdf = FPDF()
         pdf.add_page()
@@ -102,8 +108,7 @@ if st.button("Genera Contratto PDF"):
         pdf.cell(0, 10, "Firma del Locatore: ______________________", ln=True)
         pdf.cell(0, 10, "Firma del Conduttore: ______________________", ln=True)
 
-        file_path = "/tmp/contratto_noleggio.pdf"
-        pdf.output(file_path)
+        pdf.output(output_path)
 
-        with open(file_path, "rb") as f:
-            st.download_button("📄 Scarica il contratto PDF", f, file_name="contratto_noleggio.pdf", mime="application/pdf")
+        with open(output_path, "rb") as f:
+            st.download_button("📄 Scarica il contratto PDF", f, file_name=filename, mime="application/pdf")
